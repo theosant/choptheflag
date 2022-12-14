@@ -16,16 +16,16 @@ Não deem merge na main pufavozinho. Vou fazer tutorial de como deixar tudo buni
 usar ou upar alguma coisa.
 
 # Como colocar na sua branch localmente
+ ```
 git checkout *nome da sua branch*
-
+ ```
 Code normalmente até você terminar. Quando for upar pro git via terminal:
-
+ ```
 git add *arquivos que foram mudados*
-
 git commit -m "Digite aqui mensagem do commit"
-
 git push origin "seu nome"
-
+ ```
+ 
 Agora no github:
 1. Vá para Pull Requests
 2. Clique em New PR
