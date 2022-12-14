@@ -21,7 +21,9 @@ git checkout *nome da sua branch*
 Code normalmente até você terminar. Quando for upar pro git via terminal:
 
 git add *arquivos que foram mudados*
+
 git commit -m "Digite aqui mensagem do commit"
+
 git push origin "seu nome"
 
 Agora no github:
