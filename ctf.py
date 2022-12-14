@@ -5,7 +5,7 @@ from threading import *
 
 # a ser implementado
 height = 35
-lenght = 50
+lenght = 100
 
 def create_screen():
     screen = list()
@@ -20,10 +20,11 @@ def create_screen():
                 screen[i].append(' ')
     return screen
 
+def print_screen(game):
+    for i in game:
+        for j in i:
+            print(f'{j}', end='')
+        print()
 
 game = create_screen()
-
-for i in game:
-    for j in i:
-        print(f'{j}', end=' ')
-    print()
+print_screen(game)
