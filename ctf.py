@@ -1,30 +1,29 @@
 # Sistemas Operacionais - SSC0140
 
 from threading import *
+from screen import Screen
 
+class Game:
+    def __init__(self):
+        self.screen = Screen()
+        self.flags = list()
+        self.enemies = list()
+    
+    def start(self):
+        self.spawn_flags(3)
+        self.spawn_enemies(3)
+        self.screen.print_screen()
+    
+    def spawn_flags(self, number):
+        self.flags = self.screen.rand_positions(number)
+        for flag in self.flags:
+            self.screen.place_character('⚑', flag)
 
-# a ser implementado
-height = 35
-lenght = 100
+    def spawn_enemies(self, number):
+        self.enemies = self.screen.rand_positions(number)
+        for enemy in self.enemies:
+            self.screen.place_character('☻', enemy)
 
-def create_screen():
-    screen = list()
-    for i in range(height):
-        screen.append(list())
-
-    for i in range(height):
-        for j in range(lenght):
-            if j == 0 or j == lenght - 1 or i == 0 or i == height - 1:
-                screen[i].append('+')
-            else: 
-                screen[i].append(' ')
-    return screen
-
-def print_screen(game):
-    for i in game:
-        for j in i:
-            print(f'{j}', end='')
-        print()
-
-game = create_screen()
-print_screen(game)
+if __name__ == "__main__":
+    game = Game() 
+    game.start()
