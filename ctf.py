@@ -10,19 +10,16 @@ class Game:
         self.enemies = list()
     
     def start(self):
-        self.spawn_flags(3)
-        self.spawn_enemies(3)
+        self.flags = self.spawn(3, '⚑')
+        self.enemies = self.spawn(3, '☻')
+        self.main_character = self.spawn(1, '♥')
         self.screen.print_screen()
     
-    def spawn_flags(self, number):
-        self.flags = self.screen.rand_positions(number)
-        for flag in self.flags:
-            self.screen.place_character('⚑', flag)
-
-    def spawn_enemies(self, number):
-        self.enemies = self.screen.rand_positions(number)
-        for enemy in self.enemies:
-            self.screen.place_character('☻', enemy)
+    def spawn(self, number, character):
+        positions = self.screen.rand_positions(number)
+        for position in positions:
+            self.screen.place_character(character, position)
+        return position
 
 if __name__ == "__main__":
     game = Game() 
