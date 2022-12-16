@@ -2,29 +2,29 @@
 
 from threading import *
 
+class Screen:
+    def __init__(self):
+        self.height = 35
+        self.lenght = 100
 
-# a ser implementado
-height = 35
-lenght = 100
+        screen = list()
+        for i in range(self.height):
+            screen.append(list())
 
-def create_screen():
-    screen = list()
-    for i in range(height):
-        screen.append(list())
+        for i in range(self.height):
+            for j in range(self.lenght):
+                if j == 0 or j == self.lenght - 1 or i == 0 or i == self.height - 1:
+                    screen[i].append('+')
+                else: 
+                    screen[i].append(' ')
+        self.screen = screen
 
-    for i in range(height):
-        for j in range(lenght):
-            if j == 0 or j == lenght - 1 or i == 0 or i == height - 1:
-                screen[i].append('+')
-            else: 
-                screen[i].append(' ')
-    return screen
+    def print_screen(self):
+        for i in self.screen:
+            for j in i:
+                print(f'{j}', end='')
+            print()
 
-def print_screen(game):
-    for i in game:
-        for j in i:
-            print(f'{j}', end='')
-        print()
-
-game = create_screen()
-print_screen(game)
+if __name__ == "__main__":
+    tela = Screen()
+    tela.print_screen()
