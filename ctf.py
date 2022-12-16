@@ -19,7 +19,7 @@ class Game:
         positions = self.screen.rand_positions(number)
         for position in positions:
             self.screen.place_character(character, position)
-        return position
+        return positions
 
 if __name__ == "__main__":
     game = Game() 
