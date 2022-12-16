@@ -1,19 +1,20 @@
 from random import randint
-from ctf import game
+from screen import Screen
 
-class enemy:
-    def __init__(self, x, y):
+# Antes de alterar a posição do enemigo na tela tem que confirmar regiões criticas
+# Sugestão, o inimigo tem x,y, mas só é aplicado na tela caso não de ruim com 
+# Região critica
+class Enemy:
+    def __init__(self, y, x):
         self.x = x
         self.y = y
     
     def move_enemy(self):
-        move = randint(0, 3)
+        self.dx =  randint(-1,1)
+        self.dy =  randint(-1,1)
+    
+    
 
-        if move == 0 and game.screen[self.x + 1][self.y] == ' ':
-            self.x += 1
-        elif move == 1 and game.screen[self.x - 1][self.y] == ' ':
-            self.x -= 1
-        elif move == 2 and game.screen[self.x][self.y + 1] == ' ':
-            self.y += 1
-        elif move == 3 and game.screen[self.x][self.y - 1] == ' ':
-            self.y -= 1
+# o ctf verifica se esta em uma região critica
+# caso não chama a apply move
+# caso sim verifica o semaforo

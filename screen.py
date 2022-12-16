@@ -20,3 +20,11 @@ class Screen:
             for j in i:
                 print(f'{j}', end='')
             print()
+
+    def apply_move(self,y,x,dy,dx,tipo):
+        self.screen[y][x] = ' '
+        if(tipo == 1):
+            char = '☻'
+        elif(tipo == 2):
+            char = '⚑'
+        self.screen[y + dy][x + dx] = char
