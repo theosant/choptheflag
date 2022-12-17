@@ -45,7 +45,7 @@ class Screen:
 
 if __name__ == '__main__':
     stdscr = curses.initscr()
-    curses.noecho()
+    #curses.noecho()
     curses.cbreak()
 
     stdscr.addstr(0, 0, "Chop The Flag",
@@ -54,19 +54,21 @@ if __name__ == '__main__':
     x = 0
     y = 0
     while True:
-        if stdscr.getkey() == 'q':
+        c = stdscr.getkey()
+        if c == 'q':
             curses.nocbreak()
             stdscr.keypad(False)
             curses.echo()
             curses.endwin()
             break;
-        elif stdscr.getkey() == 'w' and x > 0:
+        elif c == 'w' and x > 0:
             x = x - 1
-        elif stdscr.getkey() == 'a' and y > 0:
+        elif c == 'a' and y > 0:
             y = y - 1
-        elif stdscr.getkey() == 's':
+        elif c == 's':
             x = x + 1
-        elif stdscr.getkey() == 'd':
+        elif c == 'd':
             y = y + 1
+        stdscr.clear()
         stdscr.addch(x, y, '*')
-        #stdscr.refresh()
+        stdscr.refresh()
