@@ -1,12 +1,21 @@
-class Flag:
-    #flag ocupa o espaço de 1+ para todas as direções inclusive diagonal
-    def __init__(self,y,x):
-        self.x = x
-        self.y = y
-        self.size = 1
+import threading as th
+import time
 
-    def is_Inside(self,y,x):
-        if x >= self.x - self.size and x <= self.x + self.size and \
-        y >= self.y - self.size and y <= self.y + self.size:
-            return True
-        return False
+def fun1(flag):
+    while True:
+        flag.Wait()
+        print("peguei a bandeira")
+        flag.Resolve()
+        time.sleep(0.25)
+def fun2(flag):
+    while True:
+        flag.Wait()
+        print("Não, eu peguei a bandeira")
+        flag.Resolve()
+        time.sleep(0.25)
+if __name__ == "__main__":
+    flag = Flag(1,1)
+    t = th.Thread(target = fun1, args=[flag])
+    t.start()
+    t2 = th.Thread(target = fun2,  args=[flag])
+    t2.start()

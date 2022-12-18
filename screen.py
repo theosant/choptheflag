@@ -1,10 +1,9 @@
-from random import randint
+import copy
 
 class Screen:
     def __init__(self, height=35, lenght=100):
         self.height = height
         self.lenght = lenght
-        self.occupied_positions = list()
         self.screen = self.create_screen()
     
     def create_screen(self):
@@ -20,24 +19,11 @@ class Screen:
                     screen[i].append(' ')
         return screen
 
-    def print_screen(self):
-        for i in self.screen:
+    def print_screen(self,characters):
+        screen2 = copy.deepcopy(self.screen)
+        for i in characters:
+            screen2[i.y][i.x] = i.icon
+        for i in screen2:
             for j in i:
                 print(f'{j}', end='')
             print()
-    
-    def place_character(self, character, position):
-        self.screen[position[0]][position[1]] = character
-    
-    # Funcao de gerar posicao aleatória.
-    def rand_positions(self, number):
-        positions = list()
-        for i in range(0, number):
-            heig = randint(1, self.height - 2)
-            leng = randint(1, self.lenght - 2)
-            position = [heig, leng]
-
-            if position not in self.occupied_positions:
-                positions.append(position)
-                self.occupied_positions.append(position)
-        return positions 
