@@ -1,8 +1,6 @@
-from random import randint
 import curses
 import copy
 import time
-import os
 
 class Screen:
     def __init__(self, height=35, lenght=100):
@@ -11,7 +9,7 @@ class Screen:
         self.lenght = lenght
         self.screen = self.create_screen()
 
-        # Curses...
+        # Curses (Teclado e tela)
         self.stdscr = curses.initscr()
         curses.start_color()
         self.stdscr.resize(height, lenght)
@@ -20,6 +18,7 @@ class Screen:
         curses.noecho()
         curses.curs_set(False)
 
+        # Setando cores
         curses.init_color(250, 941, 977, 930) # White
         curses.init_color(249, 910, 211, 254) # Red
         curses.init_color(248, 648, 852, 863) # Light Blue
@@ -30,6 +29,7 @@ class Screen:
         curses.init_pair(3, 247, curses.COLOR_BLACK) # Blue in Black
         curses.init_pair(4, 250, curses.COLOR_BLACK) # Navy in Black
         curses.init_pair(5, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+
 
     def create_screen(self):
         screen = list()
@@ -44,34 +44,6 @@ class Screen:
                     screen[i].append(' ')
         return screen
 
-    # def print_screen(self,characters):
-    #     screen2 = copy.deepcopy(self.screen)
-    #     for i in characters:
-    #         screen2[i.y][i.x] = i.icon
-    #     for i in screen2:
-    #         for j in i:
-    #             print(f'{j}', end='')
-    #         print()
-
-    # Funcao de gerar posicao aleatória.
-    def rand_positions(self, number):
-        positions = list()
-        for i in range(0, number):
-            heig = randint(1, self.height - 2)
-            leng = randint(1, self.lenght - 2)
-            position = [heig, leng]
-
-            if position not in self.occupied_positions:
-                positions.append(position)
-                self.occupied_positions.append(position)
-        return positions
-
-
-# Mexendo com curses aqui...
-
-    def get_key(self):
-        return self.stdscr.getkey()
-
     def end(self):
         self.stdscr.clear()
         curses.nocbreak()
@@ -79,6 +51,75 @@ class Screen:
         curses.curs_set(True)
         curses.echo()
         curses.endwin()
+
+    # Impressão por meio de 'curses'
+    def print_screen(self, characters):
+        self.stdscr.resize(100, 100)
+        curses.resizeterm(100, 100)
+        screen2 = copy.deepcopy(self.screen)
+        for c in characters:
+            for i in c:
+                screen2[i.y][i.x] = i.icon
+        self.stdscr.move(0,0)
+        for i in screen2:
+            for j in i:
+                if j == '♥':
+                    self.stdscr.addstr(j, curses.color_pair(1)) # Cores
+                elif j == '☻':
+                    self.stdscr.addstr(j, curses.color_pair(5))
+                else:
+                    self.stdscr.addstr(j)
+
+
+    # Loop de tela
+    def run_screen(self, characters):
+        while True:
+            self.stdscr.clear()
+            self.print_screen(characters)
+            self.stdscr.refresh()
+            time.sleep(0.25)
+
+            if self.stop:
+                break
+
+    def end_screen(self, enemies, threads):
+        for i in enemies:
+            i.set_stop(True)
+        self.stop = True
+
+        for thread in threads:
+            thread.join(0)
+
+        self.stdscr.clear()
+
+    def game_screen(self, character, enemies, flags,threads):
+        # Movimentação do jogador
+        end = 0
+        player = character[0]
+        while True:
+            c = self.stdscr.getkey()
+            if c == 'q':
+                self.end_screen(enemies,threads)
+                self.end()
+                break
+
+            elif c == 'w':
+                end = player.move(-1, 0, flags, enemies)
+            elif c == 'a':
+                end = player.move(0, -1, flags, enemies)
+            elif c == 's':
+                end = player.move(1, 0, flags, enemies)
+            elif c == 'd':
+                end = player.move(0, 1, flags, enemies)
+
+            if end != 0:
+                self.end_screen(enemies,threads)
+                if end == 1:
+                    self.parabains()
+                else:
+                    self.loose()
+                self.end()
+                break
 
     def select_screen(self):
         self.stdscr.resize(100, 100)
@@ -138,89 +179,6 @@ class Screen:
             if c == 's':
                 break
 
-    # Impressão por meio de 'curses'
-    def print_screen(self, characters):
-        self.stdscr.resize(100, 100)
-        curses.resizeterm(100, 100)
-        screen2 = copy.deepcopy(self.screen)
-        for c in characters:
-            for i in c:
-                screen2[i.y][i.x] = i.icon
-        self.stdscr.move(0,0)
-        for i in screen2:
-            for j in i:
-                if j == '♥':
-                    self.stdscr.addstr(j, curses.color_pair(1))
-                elif j == '☻':
-                    self.stdscr.addstr(j, curses.color_pair(5))
-                else:
-                    self.stdscr.addstr(j)
-
-
-    def run_screen(self, characters):
-        while True:
-            self.stdscr.clear()
-            self.print_screen(characters)
-            self.stdscr.refresh()
-            time.sleep(0.25)
-
-            if self.stop:
-                break
-            # os.system('clear')
-            # self.print_screen(characters)
-
-
-    def end_screen(self, enemies, threads):
-        for i in enemies:
-            i.set_stop(True)
-        self.stop = True
-
-        for thread in threads:
-            thread.join(0)
-
-        self.stdscr.clear()
-
-
-    def game_screen(self, character, enemies, flags,threads):
-        # self.stdscr.clear()
-        # self.print_screen2(characters)
-
-        # Movimentação do jogador
-        x = 0
-        player = character[0]
-        while True:
-            pos_y, pos_x = player.position()
-            c = self.stdscr.getkey()
-            if c == 'q':
-                self.end_screen(enemies,threads)
-                self.end()
-                break
-
-            elif c == 'w':
-                x = player.move(-1, 0, flags, enemies)
-            elif c == 'a':
-                x = player.move(0, -1, flags, enemies)
-            elif c == 's':
-                x = player.move(1, 0, flags, enemies)
-            elif c == 'd':
-                x = player.move(0, 1, flags, enemies)
-
-
-            if x != 0:
-                self.end_screen(enemies,threads)
-                if x == 1:
-                    self.parabains()
-                else:
-                    self.perdeu()
-                self.end()
-                break
-
-
-            # Impressão da tela e atualização
-            # self.print_screen2(characters)
-            # self.stdscr.refresh()
-            #time.sleep(0.05)
-
     def parabains(self):
         self.stdscr.resize(100, 100)
         curses.resizeterm(100, 100)
@@ -252,7 +210,7 @@ class Screen:
             if c == 'q':
                 break
 
-    def perdeu(self):
+    def loose(self):
         self.stdscr.resize(100, 100)
         curses.resizeterm(100, 100)
 
@@ -293,9 +251,3 @@ class Screen:
             c = self.stdscr.getkey()
             if c == 'f':
                 break
-
-if __name__ == '__main__':
-    screen = Screen()
-    screen.select_screen()
-    #screen.game_screen()
-    screen.end()
