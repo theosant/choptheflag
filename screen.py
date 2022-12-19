@@ -169,37 +169,48 @@ class Screen:
             # os.system('clear')
             # self.print_screen(characters)
 
+
+    def end_screen(self, enemies, threads):
+        for i in enemies:
+            i.set_stop(True)
+        self.stop = True 
+
+        for thread in threads:
+            thread.join(0)
+
+        self.stdscr.clear()
+        
+
     def game_screen(self, character, enemies, flags,threads):
         # self.stdscr.clear()
         # self.print_screen2(characters)
 
         # Movimentação do jogador
+        x = 0
         player = character[0]
         pos_y, pos_x = player.position()
         while True:
             c = self.stdscr.getkey()
             if c == 'q':  
-                for i in enemies:
-                    i.set_stop(True)
-                self.stop = True 
-
-                for thread in threads:
-                    thread.join(0)
-
-                self.stdscr.clear()
+                self.end_screen(enemies,threads)
                 self.end()
-
                 break
 
             elif c == 'w' and pos_y > 1:
-                player.move(-1, 0, flags)
+                 x = player.move(-1, 0, flags)
             elif c == 'a' and pos_x > 1:
                 pos_x = pos_x - 1
-                player.move(0, -1, flags)
+                x = player.move(0, -1, flags)
             elif c == 's' and pos_y < self.height - 2:
-                player.move(1, 0, flags)
+                x = player.move(1, 0, flags)
             elif c == 'd' and pos_x < self.lenght - 2:
-                player.move(0, 1, flags)
+                x = player.move(0, 1, flags)
+
+            if x:
+                self.end_screen(enemies,threads)
+                self.parabains()
+                self.end()
+                break
 
             
             # Impressão da tela e atualização
@@ -207,6 +218,36 @@ class Screen:
             # self.stdscr.refresh()
             #time.sleep(0.05)
 
+    def parabains(self):
+        self.stdscr.resize(100, 100)
+        curses.resizeterm(100, 100)
+
+        while True:
+            # Impressão da imagem
+            self.stdscr.addstr(0, 0, "=======================================================\n|", curses.color_pair(4))
+            self.stdscr.addstr("     ____                   __                    __ ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("    / __ \____ __________ _/ /_  ___  ____  _____/ / ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("   / /_/ / __ `/ ___/ __ `/ __ \/ _ \/ __ \/ ___/ /  ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("  / ____/ /_/ / /  / /_/ / /_/ /  __/ / / (__  )_/   ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr(" /_/    \__,_/_/   \__,_/_.___/\___/_/ /_/____(_)    ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("                                                     ")
+            self.stdscr.addstr("|\n|.....................................................|\n|", curses.color_pair(4))
+            self.stdscr.addstr("                                                     |", curses.color_pair(4))
+            self.stdscr.addstr("\n|             ", curses.color_pair(4))
+            self.stdscr.addstr("< Pressione 'Q' para sair >", curses.A_BLINK)
+            self.stdscr.addstr("             |\n|", curses.color_pair(4))
+            self.stdscr.addstr("                                                     |", curses.color_pair(4))
+            self.stdscr.addstr("\n=======================================================\n", curses.color_pair(4))
+            self.stdscr.refresh()
+            # Verificação da tecla 'Q'
+            c = self.stdscr.getkey()
+            if c == 'q':
+                break
 
 if __name__ == '__main__':
     screen = Screen()

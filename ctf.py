@@ -8,7 +8,7 @@ import time
 class Character:
     def __init__(self, y = None, x = None):
         self.icon = '☻'
-        self.pontuacao = 0
+        self.pontuacao = 2
         self.stop = False
         if y == None and x == None:
             tmp = Game.rand_positions()
@@ -39,6 +39,7 @@ class Character:
             # pegar entrada do player
             self.dx = dx
             self.dy = dy
+            y = False
             # thread que pega as entradas do player
             #define o tipo de movimento
             for f in flags:
@@ -50,17 +51,18 @@ class Character:
                 elif (now and not next):
                     f.Resolve()
                     flags.remove(f)
-                    self.pontuar()
+                    y = self.pontuar()
             #aply move
             self.move_apply()
             time.sleep(0.25)
+            return y
 
     def pontuar(self):
         self.pontuacao += 1
         if self.pontuacao == 3:
-            print("Parabens :)")
+            return True
             #tela de fim de jogo
-
+        return False
 
     def move_rand_loop(self, flags):
         while True:
