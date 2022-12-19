@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 from random import randint
 import curses
 import copy
+=======
+import copy
+import curses
+>>>>>>> 1df9b21227e3cfc0016165894c12222c7fe1fc83
 
 class Screen:
     def __init__(self, height=35, lenght=100):
