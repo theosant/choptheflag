@@ -30,10 +30,15 @@ class Character:
         self.x += self.dx
         self.y += self.dy
 
-    def move_rand_loop(self, flag):
+     def move_rand_loop(self, flag):
         while True:
             self.move_rand()
             time.sleep(0.25)
+            if self.stop:
+                break
+                
+    def set_stop(self, op):
+        self.stop = op
 
     def is_valid(self, position, height = 35,lenght = 100):
         if position[0] > 1 and position[0] < lenght - 1 and \
@@ -88,26 +93,28 @@ class Game:
         self.spawn(3, '☻')
         self.spawn(1, '♥')
 
-        #
-        # t = th.Thread(target = self.main_character[0].move_rand_loop, args=[self.flags])
-        # u = th.Thread(target = self.enemies[1].move_rand_loop, args=[self.flags])
-        # w = th.Thread(target = self.enemies[2].move_rand_loop, args=[self.flags])
-        # v = th.Thread(target = self.enemies[0].move_rand_loop, args=[self.flags])
-        # s = th.Thread(target = self.screen.run_screen, args=[self.all_objects])
-
-        #
-        # v.start()
-        # w.start()
-        # u.start()
-        # s.start()
-
         self.screen.select_screen()
 
-        #self.screen.print_screen(self.all_objects)
-        #t = th.Thread(target = self.screen.game_screen, args=[self.all_objects])
-        #t.start()
-        self.screen.game_screen(self.all_objects)
-        self.screen.end()
+        # Inimigos
+        u = th.Thread(target = self.enemies[1].move_rand_loop, args=[self.flags])
+        w = th.Thread(target = self.enemies[2].move_rand_loop, args=[self.flags])
+        v = th.Thread(target = self.enemies[0].move_rand_loop, args=[self.flags])
+        
+        v.start()
+        w.start()
+        u.start()
+
+        # Tela
+        s = th.Thread(target = self.screen.run_screen, args=[self.all_objects])
+        s.start()
+
+        self.threads = list()
+        self.threads.append(u)
+        self.threads.append(v)
+        self.threads.append(w)
+        self.threads.append(s)
+
+        self.screen.game_screen(self.all_objects, self.enemies, self.threads)
 
 
     def spawn(self, number, character):
