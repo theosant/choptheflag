@@ -1,11 +1,11 @@
 from random import randint
 import curses
+import copy
 
 class Screen:
     def __init__(self, height=35, lenght=100):
         self.height = height
         self.lenght = lenght
-        self.occupied_positions = list()
         self.screen = self.create_screen()
         # Curses...
         self.stdscr = curses.initscr()
@@ -43,8 +43,11 @@ class Screen:
                     screen[i].append(' ')
         return screen
 
-    def print_screen(self):
-        for i in self.screen:
+    def print_screen(self,characters):
+        screen2 = copy.deepcopy(self.screen)
+        for i in characters:
+            screen2[i.y][i.x] = i.icon
+        for i in screen2:
             for j in i:
                 print(f'{j}', end='')
             print()
