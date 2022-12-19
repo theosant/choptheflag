@@ -7,6 +7,7 @@ import time
 
 class Character:
     def __init__(self, y = None, x = None):
+        self.stop = False
         self.icon = '☻'
         if y == None and x == None:
             tmp = Game.rand_positions()
@@ -22,7 +23,7 @@ class Character:
     def move_rand(self):
         self.dx =  randint(-1,1)
         self.dy =  randint(-1,1)
-        
+
         while not self.is_valid([self.x + self.dx, self.y + self.dy]):
             self.dx =  randint(-1,1)
             self.dy =  randint(-1,1)
@@ -30,19 +31,19 @@ class Character:
         self.x += self.dx
         self.y += self.dy
 
-     def move_rand_loop(self, flag):
+    def move_rand_loop(self, flag):
         while True:
             self.move_rand()
             time.sleep(0.25)
             if self.stop:
                 break
-                
+
     def set_stop(self, op):
         self.stop = op
 
     def is_valid(self, position, height = 35,lenght = 100):
         if position[0] > 1 and position[0] < lenght - 1 and \
-            position[1] > 1 and position[1] < height - 1: 
+            position[1] > 1 and position[1] < height - 1:
             return True
         return False
 
@@ -99,7 +100,7 @@ class Game:
         u = th.Thread(target = self.enemies[1].move_rand_loop, args=[self.flags])
         w = th.Thread(target = self.enemies[2].move_rand_loop, args=[self.flags])
         v = th.Thread(target = self.enemies[0].move_rand_loop, args=[self.flags])
-        
+
         v.start()
         w.start()
         u.start()
