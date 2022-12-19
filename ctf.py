@@ -3,7 +3,7 @@ from random import randint
 from threading import *
 from screen import Screen
 import threading as th
-
+import time
 
 class Character:
     def __init__(self, y = None, x = None):
@@ -22,6 +22,24 @@ class Character:
     def move_rand(self):
         self.dx =  randint(-1,1)
         self.dy =  randint(-1,1)
+        
+        while not self.is_valid([self.x + self.dx, self.y + self.dy]):
+            self.dx =  randint(-1,1)
+            self.dy =  randint(-1,1)
+
+        self.x += self.dx
+        self.y += self.dy
+
+    def move_rand_loop(self, flag):
+        while True:
+            self.move_rand()
+            time.sleep(0.25)
+
+    def is_valid(self, position, height = 35,lenght = 100):
+        if position[0] > 1 and position[0] < lenght - 1 and \
+            position[1] > 1 and position[1] < height - 1: 
+            return True
+        return False
 
     def move(self, y, x):
         self.y = y
@@ -71,10 +89,10 @@ class Game:
         self.spawn(1, '♥')
 
         #
-        # t = th.Thread(target = self.main_character[0].move, args=[self.flags])
-        # u = th.Thread(target = self.enemies[1].move, args=[self.flags])
-        # w = th.Thread(target = self.enemies[2].move, args=[self.flags])
-        # v = th.Thread(target = self.enemies[0].move, args=[self.flags])
+        # t = th.Thread(target = self.main_character[0].move_rand_loop, args=[self.flags])
+        # u = th.Thread(target = self.enemies[1].move_rand_loop, args=[self.flags])
+        # w = th.Thread(target = self.enemies[2].move_rand_loop, args=[self.flags])
+        # v = th.Thread(target = self.enemies[0].move_rand_loop, args=[self.flags])
         # s = th.Thread(target = self.screen.run_screen, args=[self.all_objects])
 
         #
