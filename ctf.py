@@ -9,8 +9,8 @@ class Character:
         self.icon = '☻'
         if y == None and x == None:
             tmp = Game.rand_positions()
-            self.y = tmp[0]
-            self.x = tmp[1]
+            self.y = tmp[0][0]
+            self.x = tmp[0][1]
         else:
             self.y = y
             self.x = x
@@ -55,6 +55,7 @@ class Game:
         self.enemies = list()
         self.occupied_positions = list()
         self.all_objects = list()
+        self.main_character = list()
     
     def start(self):
         self.spawn(3, '⚑')
@@ -69,7 +70,7 @@ class Game:
                 self.flags.append(aux)
             elif character == '☻':
                 aux = Character()
-                self.enemies.append()
+                self.enemies.append(aux)
             elif character == '♥':
                 aux = Character()
                 aux.change_icon('♥')
@@ -77,19 +78,23 @@ class Game:
             self.all_objects.append(aux)
 
     # Funcao de gerar posicao aleatória.
-    def rand_positions(self, number = 1,height = 35,lenght = 100):
+    def rand_positions(number = 1,height = 35,lenght = 100):
         positions = list()
         for i in range(0, number):
             heig = randint(1, height - 2)
             leng = randint(1, lenght - 2)
             position = [heig, leng]
-            positions.append(position)
-            self.occupied_positions.append(position)
-            if position in self.occupied_positions:
-                position.pop()
-                self.occupied_positions.pop()
+            if position in positions:
+                positions.pop()
                 i -= 1
+            positions.append(position)
+            
         return positions 
+
+    def new_occupied_position(self,positions):
+        for position in positions:
+            self.occupied_positions.append(position)
+
 
 if __name__ == "__main__":
     game = Game() 
