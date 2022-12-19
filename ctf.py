@@ -22,6 +22,13 @@ class Character:
         self.dx =  randint(-1,1)
         self.dy =  randint(-1,1)
 
+    def move(self, y, x):
+        self.y = y
+        self.x = x
+
+    def position(self):
+        return self.y, self.x
+
 class Flag(Character):
     #flag ocupa o espaço de 1+ para todas as direções inclusive diagonal
     def __init__(self,y = None,x = None):
@@ -61,10 +68,13 @@ class Game:
         self.spawn(3, '⚑')
         self.spawn(3, '☻')
         self.spawn(1, '♥')
-        self.screen.print_screen(self.all_objects)
+
         self.screen.select_screen()
-        self.screen.game_screen()
+
+        #self.screen.print_screen(self.all_objects)
+        self.screen.game_screen(self.all_objects)
         self.screen.end()
+
 
     def spawn(self, number, character):
         for i in range(number):

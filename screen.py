@@ -81,6 +81,7 @@ class Screen:
         return self.stdscr.getkey()
 
     def end(self):
+        self.stdscr.clear()
         curses.nocbreak()
         self.stdscr.keypad(False)
         curses.echo()
@@ -126,42 +127,42 @@ class Screen:
             if c == 's':
                 break
 
-    def print_board(self):
+    def print_screen2(self,characters):
+        screen2 = copy.deepcopy(self.screen)
+        for i in characters:
+            screen2[i.y][i.x] = i.icon
         self.stdscr.move(0,0)
-        for i in self.screen:
+        for i in screen2:
             for j in i:
                 self.stdscr.addch(j)
-            self.stdscr.addch('\n')
 
-
-    def game_screen(self):
+    def game_screen(self, characters):
         self.stdscr.clear()
+        self.print_screen2(characters)
+
+        # Movimentação do jogador
+        player = characters[len(characters) - 1]
+        pos_y, pos_x = characters[len(characters) - 1].position()
         while True:
             c = self.stdscr.getkey()
             if c == 'q':
                 break
-            elif c == 'w' and self.player[0] > 0:
-                self.player[0] = self.player[0] - 1
-            elif c == 'a' and self.player[1] > 0:
-                self.player[1] = self.player[1] - 1
-            elif c == 's':
-                self.player[0] = self.player[0] + 1
-            elif c == 'd':
-                self.player[1] = self.player[1] + 1
-            self.stdscr.clear()
+            elif c == 'w' and pos_y > 1:
+                pos_y = pos_y - 1
+                player.move(pos_y, pos_x)
+            elif c == 'a' and pos_x > 1:
+                pos_x = pos_x - 1
+                player.move(pos_y, pos_x)
+            elif c == 's' and pos_y < self.height - 2:
+                pos_y = pos_y + 1
+                player.move(pos_y, pos_x)
+            elif c == 'd' and pos_x < self.lenght - 2:
+                pos_x = pos_x + 1
+                player.move(pos_y, pos_x)
+
+            # Impressão da tela e atualização
+            self.print_screen2(characters)
             self.stdscr.refresh()
-            self.print_board()
-            for i in self.flags:
-                self.stdscr.addch(i[0], i[1], '⚑')
-
-            for i in self.enemies:
-                self.stdscr.addch(i[0], i[1], '☻')
-            self.stdscr.addch(self.player[0], self.player[1], '♥')
-
-            self.stdscr.refresh()
-
-
-
 
 if __name__ == '__main__':
     screen = Screen()
