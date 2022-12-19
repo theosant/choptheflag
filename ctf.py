@@ -34,10 +34,6 @@ class Character:
             self.x += self.dx
             self.y += self.dy
 
-    # 0: não pontuou
-    # 1: pontuou
-    # 2: perdeu
-
     def move(self,dy, dx, flags, enemies):
             #define nova posição
             # pegar entrada do player
@@ -55,7 +51,7 @@ class Character:
                 elif (now and not next):
                     f.Resolve()
                     flags.remove(f)
-                    y = self.pontuar()
+                    y = self.point()
             #aply move
             self.move_apply()
             for i in enemies:
@@ -64,20 +60,17 @@ class Character:
             time.sleep(0.25)
             return y
 
-    def pontuar(self):
+    def point(self):
         self.pontuacao += 1
         if self.pontuacao == 3:
             return 1
             #tela de fim de jogo
         return 0
 
-    def move_rand_loop(self, flags, main_character, result):
+    def move_rand_loop(self, flags):
         while True:
             #define nova posição
             self.move_rand()
-            if main_character[0].position()[0] == self.position()[0] and main_character[0].position()[1] == self.position()[1]:
-                result = True
-                break
 
             #define o tipo de movimento
             for f in flags:
@@ -98,8 +91,8 @@ class Character:
         self.stop = op
 
     def is_valid(self, position, height = 35,lenght = 100):
-        if position[0] > 1 and position[0] < lenght - 1 and \
-            position[1] > 1 and position[1] < height - 1:
+        if position[0] >= 1 and position[0] < lenght - 1 and \
+            position[1] >= 1 and position[1] < height - 1:
             return True
         return False
 
@@ -152,21 +145,14 @@ class Game:
         self.threads = list()
 
     def start_enemies(self):
-        result = False
         for i in self.enemies:
-            t = th.Thread(target = i.move_rand_loop, args=[self.flags, self.main_character, result])
+            t = th.Thread(target = i.move_rand_loop, args=[self.flags])
             t.start()
-            '''
-            if result[0]:
-                self.screen.end_screen()
-                self.screen.perdeu()
-                self.screen.end()
-            '''
             self.threads.append(t)
 
     def start(self):
         self.spawn(3, '⚑')
-        self.spawn(3, '☻')
+        self.spawn(30, '☻')
         self.spawn(1, '♥')
 
         self.screen.select_screen()

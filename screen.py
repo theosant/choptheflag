@@ -29,13 +29,7 @@ class Screen:
         curses.init_pair(2, 248, curses.COLOR_BLACK) # Light Blue in Black
         curses.init_pair(3, 247, curses.COLOR_BLACK) # Blue in Black
         curses.init_pair(4, 250, curses.COLOR_BLACK) # Navy in Black
-        '''
-        curses.init_pair(1, 249, 250) # Red in White
-        curses.init_pair(2, 248, 250) # Light Blue in White
-        curses.init_pair(3, 247, 250) # Blue in White
-        curses.init_pair(4, 246, 250) # Navy in White
-        '''
-
+        curses.init_pair(5, curses.COLOR_YELLOW, curses.COLOR_BLACK)
 
     def create_screen(self):
         screen = list()
@@ -50,14 +44,14 @@ class Screen:
                     screen[i].append(' ')
         return screen
 
-    def print_screen(self,characters):
-        screen2 = copy.deepcopy(self.screen)
-        for i in characters:
-            screen2[i.y][i.x] = i.icon
-        for i in screen2:
-            for j in i:
-                print(f'{j}', end='')
-            print()
+    # def print_screen(self,characters):
+    #     screen2 = copy.deepcopy(self.screen)
+    #     for i in characters:
+    #         screen2[i.y][i.x] = i.icon
+    #     for i in screen2:
+    #         for j in i:
+    #             print(f'{j}', end='')
+    #         print()
 
     # Funcao de gerar posicao aleatória.
     def rand_positions(self, number):
@@ -155,7 +149,13 @@ class Screen:
         self.stdscr.move(0,0)
         for i in screen2:
             for j in i:
-                self.stdscr.addch(j)
+                if j == '♥':
+                    self.stdscr.addstr(j, curses.color_pair(1))
+                elif j == '☻':
+                    self.stdscr.addstr(j, curses.color_pair(5))
+                else:
+                    self.stdscr.addstr(j)
+
 
     def run_screen(self, characters):
         while True:
@@ -188,22 +188,21 @@ class Screen:
         # Movimentação do jogador
         x = 0
         player = character[0]
-        pos_y, pos_x = player.position()
         while True:
+            pos_y, pos_x = player.position()
             c = self.stdscr.getkey()
             if c == 'q':
                 self.end_screen(enemies,threads)
                 self.end()
                 break
 
-            elif c == 'w' and pos_y > 1:
-                 x = player.move(-1, 0, flags, enemies)
-            elif c == 'a' and pos_x > 1:
-                pos_x = pos_x - 1
+            elif c == 'w':
+                x = player.move(-1, 0, flags, enemies)
+            elif c == 'a':
                 x = player.move(0, -1, flags, enemies)
-            elif c == 's' and pos_y < self.height - 2:
+            elif c == 's':
                 x = player.move(1, 0, flags, enemies)
-            elif c == 'd' and pos_x < self.lenght - 2:
+            elif c == 'd':
                 x = player.move(0, 1, flags, enemies)
 
 
