@@ -2,6 +2,7 @@
 from random import randint
 from threading import *
 from screen import Screen
+import threading as th
 
 
 class Character:
@@ -69,9 +70,24 @@ class Game:
         self.spawn(3, '☻')
         self.spawn(1, '♥')
 
+        #
+        # t = th.Thread(target = self.main_character[0].move, args=[self.flags])
+        # u = th.Thread(target = self.enemies[1].move, args=[self.flags])
+        # w = th.Thread(target = self.enemies[2].move, args=[self.flags])
+        # v = th.Thread(target = self.enemies[0].move, args=[self.flags])
+        # s = th.Thread(target = self.screen.run_screen, args=[self.all_objects])
+
+        #
+        # v.start()
+        # w.start()
+        # u.start()
+        # s.start()
+
         self.screen.select_screen()
 
         #self.screen.print_screen(self.all_objects)
+        #t = th.Thread(target = self.screen.game_screen, args=[self.all_objects])
+        #t.start()
         self.screen.game_screen(self.all_objects)
         self.screen.end()
 
