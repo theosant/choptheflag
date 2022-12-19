@@ -1,9 +1,12 @@
 from random import randint
 import curses
 import copy
+import time
+import os
 
 class Screen:
     def __init__(self, height=35, lenght=100):
+        self.stop = False
         self.height = height
         self.lenght = lenght
         self.screen = self.create_screen()
@@ -142,7 +145,6 @@ class Screen:
                 break
 
     # Impressão por meio de 'curses'
-                
     def print_screen2(self,characters):
         self.stdscr.resize(100, 100)
         curses.resizeterm(100, 100)
@@ -162,16 +164,33 @@ class Screen:
             self.stdscr.refresh()
             time.sleep(0.25) 
 
-    def game_screen(self, characters):
-        self.stdscr.clear()
-        self.print_screen2(characters)
+            if self.stop:
+                break
+            # os.system('clear')
+            # self.print_screen(characters)
+
+    def game_screen(self, characters, enemies, threads):
+        # self.stdscr.clear()
+        # self.print_screen2(characters)
 
         # Movimentação do jogador
         player = characters[len(characters) - 1]
         pos_y, pos_x = characters[len(characters) - 1].position()
         while True:
             c = self.stdscr.getkey()
-            if c == 'q':
+            if c == 'q':  
+                
+                enemies[0].set_stop(True)
+                enemies[1].set_stop(True)
+                enemies[2].set_stop(True)
+                self.stop = True 
+
+                for thread in threads:
+                    thread.join(0)
+
+                self.stdscr.clear()
+                self.end()
+
                 break
 
             elif c == 'w' and pos_y > 1:
@@ -187,9 +206,11 @@ class Screen:
                 pos_x = pos_x + 1
                 player.move(pos_y, pos_x)
 
+            
             # Impressão da tela e atualização
-            self.print_screen2(characters)
-            self.stdscr.refresh()
+            # self.print_screen2(characters)
+            # self.stdscr.refresh()
+            # time.sleep(0.05)
 
 
 if __name__ == '__main__':

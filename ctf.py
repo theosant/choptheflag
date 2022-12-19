@@ -47,6 +47,11 @@ class Character:
             #aply move
             self.move_apply()
             time.sleep(0.25)
+            if self.stop:
+                break
+                
+    def set_stop(self, op):
+        self.stop = op
 
     def is_valid(self, position, height = 35,lenght = 100):
         if position[0] > 1 and position[0] < lenght - 1 and \
@@ -120,13 +125,18 @@ class Game:
         # v = th.Thread(target = self.enemies[0].move_rand_loop, args=[self.flags])
         # s = th.Thread(target = self.screen.run_screen, args=[self.all_objects])
 
-        #
-        # v.start()
-        # w.start()
-        # u.start()
-        # s.start()
+        # Inimigos
+        u = th.Thread(target = self.enemies[1].move_rand_loop, args=[self.flags])
+        w = th.Thread(target = self.enemies[2].move_rand_loop, args=[self.flags])
+        v = th.Thread(target = self.enemies[0].move_rand_loop, args=[self.flags])
+        
+        v.start()
+        w.start()
+        u.start()
 
-        self.screen.select_screen()
+        # Tela
+        s = th.Thread(target = self.screen.run_screen, args=[self.all_objects])
+        s.start()
 
         #self.screen.print_screen(self.all_objects)
         #t = th.Thread(target = self.screen.game_screen, args=[self.all_objects])
@@ -134,6 +144,8 @@ class Game:
         #self.start_enemies()
         self.screen.game_screen(self.all_objects)
         self.screen.end()
+
+        self.screen.game_screen(self.all_objects, self.enemies, self.threads)
 
 
     def spawn(self, number, character):
