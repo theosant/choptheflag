@@ -27,12 +27,25 @@ class Character:
             self.dx =  randint(-1,1)
             self.dy =  randint(-1,1)
 
+    def move_apply(self):
         self.x += self.dx
         self.y += self.dy
 
-    def move_rand_loop(self, flag):
+    def move_rand_loop(self, flags):
         while True:
+            #define nova posição
             self.move_rand()
+            #define o tipo de movimento
+            for f in flags:
+                next = f.is_Next_Inside(self)
+                now = f.is_Now_Inside(self)
+                #entra no semaforo se entrar na regiao
+                if(not now and next):
+                    f.Wait()
+                elif (now and not next):
+                    f.Resolve()
+            #aply move
+            self.move_apply()
             time.sleep(0.25)
 
     def is_valid(self, position, height = 35,lenght = 100):
@@ -40,10 +53,6 @@ class Character:
             position[1] > 1 and position[1] < height - 1: 
             return True
         return False
-
-    def move(self, y, x):
-        self.y = y
-        self.x = x
 
     def position(self):
         return self.y, self.x
@@ -56,9 +65,18 @@ class Flag(Character):
         self.semaphore = 1
         self.icon = '⚑'
 
-    def is_Inside(self,y,x):
-        if x >= self.x - self.size and x <= self.x + self.size and \
-        y >= self.y - self.size and y <= self.y + self.size:
+    def is_Next_Inside(self, character):
+        if character.x  + character.dx >= self.x - self.size and \
+        character.x  + character.dx <= self.x + self.size and \
+        character.y  + character.dy >= self.y - self.size and \
+        character.y  + character.dy <= self.y + self.size:
+            return True
+        return False
+    def is_Now_Inside(self, character):
+        if character.x >= self.x - self.size and \
+        character.x <= self.x + self.size and \
+        character.y >= self.y - self.size and \
+        character.y <= self.y + self.size:
             return True
         return False
 
@@ -82,12 +100,19 @@ class Game:
         self.occupied_positions = list()
         self.all_objects = list()
         self.main_character = list()
+        self.threads = list()
+
+    def start_enemies(self):
+        for i in self.enemies:
+            t = th.Thread(target = i.move_rand_loop, args=[self.flags])  
+            t.start()    
+            self.threads.append(t)   
 
     def start(self):
         self.spawn(3, '⚑')
         self.spawn(3, '☻')
         self.spawn(1, '♥')
-
+        
         #
         # t = th.Thread(target = self.main_character[0].move_rand_loop, args=[self.flags])
         # u = th.Thread(target = self.enemies[1].move_rand_loop, args=[self.flags])
@@ -106,6 +131,7 @@ class Game:
         #self.screen.print_screen(self.all_objects)
         #t = th.Thread(target = self.screen.game_screen, args=[self.all_objects])
         #t.start()
+        #self.start_enemies()
         self.screen.game_screen(self.all_objects)
         self.screen.end()
 
