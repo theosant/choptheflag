@@ -88,7 +88,7 @@ class Screen:
         self.stop = True
 
         for thread in threads:
-            thread.join(0)
+            thread.join()
 
         self.stdscr.clear()
 
