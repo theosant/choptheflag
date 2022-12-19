@@ -142,7 +142,10 @@ class Screen:
                 break
 
     # Impressão por meio de 'curses'
+                
     def print_screen2(self,characters):
+        self.stdscr.resize(100, 100)
+        curses.resizeterm(100, 100)
         screen2 = copy.deepcopy(self.screen)
         for i in characters:
             screen2[i.y][i.x] = i.icon
@@ -150,6 +153,14 @@ class Screen:
         for i in screen2:
             for j in i:
                 self.stdscr.addch(j)
+        # self.stdscr.refresh()
+
+    def run_screen(self, characters):
+        while True:
+            self.stdscr.clear()
+            self.print_screen2(characters)
+            self.stdscr.refresh()
+            time.sleep(0.25) 
 
     def game_screen(self, characters):
         self.stdscr.clear()
