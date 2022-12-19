@@ -8,6 +8,7 @@ import time
 class Character:
     def __init__(self, y = None, x = None):
         self.icon = '☻'
+        self.stop = False
         if y == None and x == None:
             tmp = Game.rand_positions()
             self.y = tmp[0][0]
@@ -118,32 +119,14 @@ class Game:
         self.spawn(3, '☻')
         self.spawn(1, '♥')
         
-        #
+        self.screen.select_screen()
         # t = th.Thread(target = self.main_character[0].move_rand_loop, args=[self.flags])
-        # u = th.Thread(target = self.enemies[1].move_rand_loop, args=[self.flags])
-        # w = th.Thread(target = self.enemies[2].move_rand_loop, args=[self.flags])
-        # v = th.Thread(target = self.enemies[0].move_rand_loop, args=[self.flags])
-        # s = th.Thread(target = self.screen.run_screen, args=[self.all_objects])
 
         # Inimigos
-        u = th.Thread(target = self.enemies[1].move_rand_loop, args=[self.flags])
-        w = th.Thread(target = self.enemies[2].move_rand_loop, args=[self.flags])
-        v = th.Thread(target = self.enemies[0].move_rand_loop, args=[self.flags])
-        
-        v.start()
-        w.start()
-        u.start()
-
+        #self.start_enemies()
         # Tela
         s = th.Thread(target = self.screen.run_screen, args=[self.all_objects])
         s.start()
-
-        #self.screen.print_screen(self.all_objects)
-        #t = th.Thread(target = self.screen.game_screen, args=[self.all_objects])
-        #t.start()
-        #self.start_enemies()
-        self.screen.game_screen(self.all_objects)
-        self.screen.end()
 
         self.screen.game_screen(self.all_objects, self.enemies, self.threads)
 

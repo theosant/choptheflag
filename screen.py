@@ -155,7 +155,6 @@ class Screen:
         for i in screen2:
             for j in i:
                 self.stdscr.addch(j)
-        # self.stdscr.refresh()
 
     def run_screen(self, characters):
         while True:
@@ -179,10 +178,8 @@ class Screen:
         while True:
             c = self.stdscr.getkey()
             if c == 'q':  
-                
-                enemies[0].set_stop(True)
-                enemies[1].set_stop(True)
-                enemies[2].set_stop(True)
+                for i in enemies:
+                    i.set_stop(True)
                 self.stop = True 
 
                 for thread in threads:
