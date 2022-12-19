@@ -162,7 +162,7 @@ class Screen:
             self.stdscr.clear()
             self.print_screen(characters)
             self.stdscr.refresh()
-            time.sleep(0.25) 
+            time.sleep(0.25)
 
             if self.stop:
                 break
@@ -173,13 +173,13 @@ class Screen:
     def end_screen(self, enemies, threads):
         for i in enemies:
             i.set_stop(True)
-        self.stop = True 
+        self.stop = True
 
         for thread in threads:
             thread.join(0)
 
         self.stdscr.clear()
-        
+
 
     def game_screen(self, character, enemies, flags,threads):
         # self.stdscr.clear()
@@ -191,28 +191,32 @@ class Screen:
         pos_y, pos_x = player.position()
         while True:
             c = self.stdscr.getkey()
-            if c == 'q':  
+            if c == 'q':
                 self.end_screen(enemies,threads)
                 self.end()
                 break
 
             elif c == 'w' and pos_y > 1:
-                 x = player.move(-1, 0, flags)
+                 x = player.move(-1, 0, flags, enemies)
             elif c == 'a' and pos_x > 1:
                 pos_x = pos_x - 1
-                x = player.move(0, -1, flags)
+                x = player.move(0, -1, flags, enemies)
             elif c == 's' and pos_y < self.height - 2:
-                x = player.move(1, 0, flags)
+                x = player.move(1, 0, flags, enemies)
             elif c == 'd' and pos_x < self.lenght - 2:
-                x = player.move(0, 1, flags)
+                x = player.move(0, 1, flags, enemies)
 
-            if x:
+
+            if x != 0:
                 self.end_screen(enemies,threads)
-                self.parabains()
+                if x == 1:
+                    self.parabains()
+                else:
+                    self.perdeu()
                 self.end()
                 break
 
-            
+
             # Impressão da tela e atualização
             # self.print_screen2(characters)
             # self.stdscr.refresh()
@@ -247,6 +251,48 @@ class Screen:
             # Verificação da tecla 'Q'
             c = self.stdscr.getkey()
             if c == 'q':
+                break
+
+    def perdeu(self):
+        self.stdscr.resize(100, 100)
+        curses.resizeterm(100, 100)
+
+        while True:
+            # Impressão da imagem
+            self.stdscr.addstr(0, 0, "=============================================\n|", curses.color_pair(4))
+            self.stdscr.addstr("   ____                 _                  ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("  |  _ \  ___  _ __  __| |  ___  _   _     ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("  | |_) |/ _ \| '__|/ _` | / _ \| | | |    ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("  |  __/|  __/| |  | (_| ||  __/| |_| |    ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("  |_|    \___||_|   \__,_| \___| \__,_|    ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("  __     __            _  _   /\/|         ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("  \ \   / /__ _   ___ (_)| | |/\/_   ___   ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("   \ \ / // _` | / __|| || | / _` | / _ \  ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("    \ V /| (_| || (__ | || || (_| || (_) | ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("     \_/  \__,_| \___||_||_| \__,_| \___/  ", curses.color_pair(1))
+            self.stdscr.addstr("|\n|", curses.color_pair(4))
+            self.stdscr.addstr("                                           ")
+            self.stdscr.addstr("|\n|...........................................|\n|", curses.color_pair(4))
+            self.stdscr.addstr("                                           |", curses.color_pair(4))
+            self.stdscr.addstr("\n|       ", curses.color_pair(4))
+            self.stdscr.addstr("< Press 'F' to pay respects >", curses.A_BLINK)
+            self.stdscr.addstr("       |\n|", curses.color_pair(4))
+            self.stdscr.addstr("                                           |", curses.color_pair(4))
+            self.stdscr.addstr("\n=============================================\n", curses.color_pair(4))
+            self.stdscr.refresh()
+
+            # Verificação da tecla 'Q'
+            c = self.stdscr.getkey()
+            if c == 'f':
                 break
 
 if __name__ == '__main__':

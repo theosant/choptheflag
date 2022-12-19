@@ -1,6 +1,5 @@
 # Sistemas Operacionais - SSC0140
 from random import randint
-from threading import *
 from screen import Screen
 import threading as th
 import time
@@ -8,8 +7,9 @@ import time
 class Character:
     def __init__(self, y = None, x = None):
         self.icon = '☻'
-        self.pontuacao = 2
+        self.pontuacao = 0
         self.stop = False
+        self.value = False
         if y == None and x == None:
             tmp = Game.rand_positions()
             self.y = tmp[0][0]
@@ -24,7 +24,7 @@ class Character:
     def move_rand(self):
         self.dx =  randint(-1,1)
         self.dy =  randint(-1,1)
-        
+
         while not self.is_valid([self.x + self.dx, self.y + self.dy]):
             self.dx =  randint(-1,1)
             self.dy =  randint(-1,1)
@@ -34,7 +34,11 @@ class Character:
             self.x += self.dx
             self.y += self.dy
 
-    def move(self,dy, dx, flags):
+    # 0: não pontuou
+    # 1: pontuou
+    # 2: perdeu
+
+    def move(self,dy, dx, flags, enemies):
             #define nova posição
             # pegar entrada do player
             self.dx = dx
@@ -54,20 +58,27 @@ class Character:
                     y = self.pontuar()
             #aply move
             self.move_apply()
+            for i in enemies:
+                if i.position() == self.position():
+                    y = 2
             time.sleep(0.25)
             return y
 
     def pontuar(self):
         self.pontuacao += 1
         if self.pontuacao == 3:
-            return True
+            return 1
             #tela de fim de jogo
-        return False
+        return 0
 
-    def move_rand_loop(self, flags):
+    def move_rand_loop(self, flags, main_character, result):
         while True:
             #define nova posição
             self.move_rand()
+            if main_character[0].position()[0] == self.position()[0] and main_character[0].position()[1] == self.position()[1]:
+                result = True
+                break
+
             #define o tipo de movimento
             for f in flags:
                 next = f.is_Next_Inside(self)
@@ -82,13 +93,13 @@ class Character:
             time.sleep(0.25)
             if self.stop:
                 break
-                
+
     def set_stop(self, op):
         self.stop = op
 
     def is_valid(self, position, height = 35,lenght = 100):
         if position[0] > 1 and position[0] < lenght - 1 and \
-            position[1] > 1 and position[1] < height - 1: 
+            position[1] > 1 and position[1] < height - 1:
             return True
         return False
 
@@ -141,18 +152,24 @@ class Game:
         self.threads = list()
 
     def start_enemies(self):
+        result = False
         for i in self.enemies:
-            t = th.Thread(target = i.move_rand_loop, args=[self.flags])  
-            t.start()    
-            self.threads.append(t)   
+            t = th.Thread(target = i.move_rand_loop, args=[self.flags, self.main_character, result])
+            t.start()
+            '''
+            if result[0]:
+                self.screen.end_screen()
+                self.screen.perdeu()
+                self.screen.end()
+            '''
+            self.threads.append(t)
 
     def start(self):
         self.spawn(3, '⚑')
         self.spawn(3, '☻')
         self.spawn(1, '♥')
-        
+
         self.screen.select_screen()
-        # t = th.Thread(target = self.main_character[0].move_rand_loop, args=[self.flags])
 
         # Inimigos
         self.start_enemies()
@@ -161,7 +178,10 @@ class Game:
         self.threads.append(s)
         s.start()
 
-        self.screen.game_screen(self.main_character, self.enemies,self.flags, self.threads)
+        u = th.Thread(target = self.screen.game_screen, args=[self.main_character, self.enemies,self.flags, self.threads])
+        u.start()
+
+        u.join()
 
 
     def spawn(self, number, character):
