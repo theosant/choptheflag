@@ -145,12 +145,13 @@ class Screen:
                 break
 
     # Impressão por meio de 'curses'
-    def print_screen2(self,characters):
+    def print_screen(self, characters):
         self.stdscr.resize(100, 100)
         curses.resizeterm(100, 100)
         screen2 = copy.deepcopy(self.screen)
-        for i in characters:
-            screen2[i.y][i.x] = i.icon
+        for c in characters:
+            for i in c:
+                screen2[i.y][i.x] = i.icon
         self.stdscr.move(0,0)
         for i in screen2:
             for j in i:
@@ -159,7 +160,7 @@ class Screen:
     def run_screen(self, characters):
         while True:
             self.stdscr.clear()
-            self.print_screen2(characters)
+            self.print_screen(characters)
             self.stdscr.refresh()
             time.sleep(0.25) 
 
@@ -168,13 +169,13 @@ class Screen:
             # os.system('clear')
             # self.print_screen(characters)
 
-    def game_screen(self, characters, enemies, threads):
+    def game_screen(self, character, enemies, flags,threads):
         # self.stdscr.clear()
         # self.print_screen2(characters)
 
         # Movimentação do jogador
-        player = characters[len(characters) - 1]
-        pos_y, pos_x = characters[len(characters) - 1].position()
+        player = character[0]
+        pos_y, pos_x = player.position()
         while True:
             c = self.stdscr.getkey()
             if c == 'q':  
@@ -191,23 +192,20 @@ class Screen:
                 break
 
             elif c == 'w' and pos_y > 1:
-                pos_y = pos_y - 1
-                player.move(pos_y, pos_x)
+                player.move(-1, 0, flags)
             elif c == 'a' and pos_x > 1:
                 pos_x = pos_x - 1
-                player.move(pos_y, pos_x)
+                player.move(0, -1, flags)
             elif c == 's' and pos_y < self.height - 2:
-                pos_y = pos_y + 1
-                player.move(pos_y, pos_x)
+                player.move(1, 0, flags)
             elif c == 'd' and pos_x < self.lenght - 2:
-                pos_x = pos_x + 1
-                player.move(pos_y, pos_x)
+                player.move(0, 1, flags)
 
             
             # Impressão da tela e atualização
             # self.print_screen2(characters)
             # self.stdscr.refresh()
-            # time.sleep(0.05)
+            #time.sleep(0.05)
 
 
 if __name__ == '__main__':

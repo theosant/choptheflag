@@ -8,6 +8,7 @@ import time
 class Character:
     def __init__(self, y = None, x = None):
         self.icon = '☻'
+        self.pontuacao = 0
         self.stop = False
         if y == None and x == None:
             tmp = Game.rand_positions()
@@ -29,8 +30,37 @@ class Character:
             self.dy =  randint(-1,1)
 
     def move_apply(self):
-        self.x += self.dx
-        self.y += self.dy
+        if self.is_valid([self.x + self.dx, self.y + self.dy]):
+            self.x += self.dx
+            self.y += self.dy
+
+    def move(self,dy, dx, flags):
+            #define nova posição
+            # pegar entrada do player
+            self.dx = dx
+            self.dy = dy
+            # thread que pega as entradas do player
+            #define o tipo de movimento
+            for f in flags:
+                next = f.is_Next_Inside(self)
+                now = f.is_Now_Inside(self)
+                #entra no semaforo se entrar na regiao
+                if(not now and next):
+                    f.Wait()
+                elif (now and not next):
+                    f.Resolve()
+                    flags.remove(f)
+                    self.pontuar()
+            #aply move
+            self.move_apply()
+            time.sleep(0.25)
+
+    def pontuar(self):
+        self.pontuacao += 1
+        if self.pontuacao == 3:
+            print("Parabens :)")
+            #tela de fim de jogo
+
 
     def move_rand_loop(self, flags):
         while True:
@@ -104,7 +134,7 @@ class Game:
         self.flags = list()
         self.enemies = list()
         self.occupied_positions = list()
-        self.all_objects = list()
+        self.all_objects = [[],[],[]]
         self.main_character = list()
         self.threads = list()
 
@@ -123,12 +153,13 @@ class Game:
         # t = th.Thread(target = self.main_character[0].move_rand_loop, args=[self.flags])
 
         # Inimigos
-        #self.start_enemies()
+        self.start_enemies()
         # Tela
         s = th.Thread(target = self.screen.run_screen, args=[self.all_objects])
+        self.threads.append(s)
         s.start()
 
-        self.screen.game_screen(self.all_objects, self.enemies, self.threads)
+        self.screen.game_screen(self.main_character, self.enemies,self.flags, self.threads)
 
 
     def spawn(self, number, character):
@@ -143,8 +174,13 @@ class Game:
                 aux = Character()
                 aux.change_icon('♥')
                 self.main_character.append(aux)
-            self.all_objects.append(aux)
 
+        if character == '⚑':
+            self.all_objects.append(self.flags)
+        elif character == '☻':
+            self.all_objects.append(self.enemies)
+        elif character == '♥':
+            self.all_objects.append(self.main_character)
     # Funcao de gerar posicao aleatória.
     def rand_positions(number = 1,height = 35,lenght = 100):
         positions = list()
