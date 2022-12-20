@@ -7,7 +7,6 @@ class Screen:
         self.stop = False
         self.height = height
         self.lenght = lenght
-        self.screen = self.create_screen()
 
         # Curses (Teclado e tela)
         self.stdscr = curses.initscr()
@@ -31,19 +30,6 @@ class Screen:
         curses.init_pair(5, curses.COLOR_YELLOW, curses.COLOR_BLACK)
 
 
-    def create_screen(self):
-        screen = list()
-        for i in range(self.height):
-            screen.append(list())
-
-        for i in range(self.height):
-            for j in range(self.lenght):
-                if j == 0 or j == self.lenght - 1 or i == 0 or i == self.height - 1:
-                    screen[i].append('+')
-                else:
-                    screen[i].append(' ')
-        return screen
-
     def end(self):
         self.stdscr.clear()
         curses.nocbreak()
@@ -56,28 +42,31 @@ class Screen:
     def print_screen(self, characters):
         self.stdscr.resize(100, 100)
         curses.resizeterm(100, 100)
-        screen2 = copy.deepcopy(self.screen)
+        self.stdscr.move(0,0)
+
+        for i in range(self.height):
+            self.stdscr.addstr(i,0,'+')
+            self.stdscr.addstr(i,self.lenght-1,'+')
+        for i in range(self.lenght):
+            self.stdscr.addstr(0,i,'+')
+            self.stdscr.addstr(self.height-1, i,'+')
+
         for c in characters:
             for i in c:
-                screen2[i.y][i.x] = i.icon
-        self.stdscr.move(0,0)
-        for i in screen2:
-            for j in i:
-                if j == '♥':
-                    self.stdscr.addstr(j, curses.color_pair(1)) # Cores
-                elif j == '☻':
-                    self.stdscr.addstr(j, curses.color_pair(5))
+                if i.icon == '♥':
+                    self.stdscr.addstr(i.y,i.x,i.icon, curses.color_pair(1)) # Cores
+                elif i.icon == '☻':
+                    self.stdscr.addstr(i.y,i.x,i.icon, curses.color_pair(5))
                 else:
-                    self.stdscr.addstr(j)
-
+                    self.stdscr.addstr(i.y,i.x,i.icon)
+        self.stdscr.refresh()
 
     # Loop de tela
     def run_screen(self, characters):
         while True:
             self.stdscr.clear()
             self.print_screen(characters)
-            self.stdscr.refresh()
-            time.sleep(0.25)
+            time.sleep(0.05)
 
             if self.stop:
                 break
@@ -111,7 +100,6 @@ class Screen:
                 end = player.move(1, 0, flags, enemies)
             elif c == 'd':
                 end = player.move(0, 1, flags, enemies)
-
             if end != 0:
                 self.end_screen(enemies,threads)
                 if end == 1:

@@ -4,6 +4,8 @@ from character import Flag
 from character import Main
 from character import Enemy
 import threading as th
+import curses as cur
+import time as ti
 
 class Game:
     def __init__(self):
@@ -23,6 +25,14 @@ class Game:
             t.start()
             self.threads.append(t)
 
+
+    def limpandoo(self,screen):
+        while True:
+            cur.flushinp()
+            ti.sleep(0.2)
+            if screen.stop:
+                break
+
     def start(self):
         self.spawn(3, '⚑')
         self.spawn(30, '☻')
@@ -35,6 +45,10 @@ class Game:
         
         # Tela
         s = th.Thread(target = self.screen.run_screen, args=[self.all_objects])
+        self.threads.append(s)
+        s.start()
+
+        s = th.Thread(target = self.limpandoo, args = [self.screen])
         self.threads.append(s)
         s.start()
 

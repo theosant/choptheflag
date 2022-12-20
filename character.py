@@ -78,7 +78,7 @@ class Main(Character):
             for i in enemies:
                 if i.position() == self.position():
                     end = 2 # perdeu de jogo
-            time.sleep(0.25)
+            time.sleep(0.1)
             return end
 
     def point(self):
