@@ -1,4 +1,7 @@
 # Chop The Flag
+Você controla o ♥, seu objetivo, pegar todas as ⚑, até ai tudo simples, o que você não esperava, ☻ andando aleatóriamente pelo mapa.
+Pegue todas as bandeiras sem encostar no ☻ e ganhe o jogo.
+Vale ressaltar que a bandeira é uma região crítica, ou seja, somente um de nós pode estar lá, chegue primeiro ou aguarde sua vez!!
 Joguin bobo de terminal pra jojar e ser feliz demais.
 
 
